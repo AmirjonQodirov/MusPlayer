@@ -12,9 +12,27 @@ import java.util.List;
 
 public class GetSongHelper {
 
-    static public ArrayList<String> getAllAudioFromDevice(final Context context) {
+    private static boolean uris_loaded = false;
+    private static ArrayList<String> uris = new ArrayList<>();
 
-        final ArrayList<String> tempAudioList = new ArrayList<>();
+    public static boolean isUris_loaded() {
+        return uris_loaded;
+    }
+
+    public static void setUris_loaded(boolean uris_loaded) {
+        GetSongHelper.uris_loaded = uris_loaded;
+    }
+
+    public static ArrayList<String> getUris() {
+        return uris;
+    }
+
+    public static void setUris(ArrayList<String> uris) {
+        GetSongHelper.uris = uris;
+    }
+
+    static public void getAllAudioFromDevice(final Context context) {
+        uris.clear();
 
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 
@@ -33,12 +51,12 @@ public class GetSongHelper {
 
 //                audioModel.setUri(path);
 
-                tempAudioList.add(path);
+                uris.add(path);
             }
             c.close();
         }
 
-        return tempAudioList;
+        GetSongHelper.setUris_loaded(true);
     }
 
 }
