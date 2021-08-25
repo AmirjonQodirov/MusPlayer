@@ -7,4 +7,7 @@
     <color name="main_gray">#e3e3e3</color>
     <color name="secondary_gray" >#80e3e3e3</color>
 
+    <color name="main_active">#40FBFB</color>
+    <color name="main_active_bold">#2ABBBB</color>
+
 </resources>
