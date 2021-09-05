@@ -1,5 +1,6 @@
 package com.musplayer.utils
 
+import java.time.Duration
 import java.util.*
 
 class Song(
@@ -9,8 +10,10 @@ class Song(
     var album: String = "",
     var imgUri: String = "",
     var directory: String = "",
-    var lastUpdate: Date,
+//    var duration: Int = 0,
+//    var lastUpdate: Date,
 
     var is_plying: Boolean = false,
     var time_play: Int = 0
-) {}
+) {
+}

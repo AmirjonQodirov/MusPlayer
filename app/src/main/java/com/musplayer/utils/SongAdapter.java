@@ -18,11 +18,11 @@ import com.musplayer.R;
 import java.util.ArrayList;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder>{
-    public ArrayList<String> songs;
+    public ArrayList<Song> songs;
     public RecycleViewClickListener listener;
     public Context context;
 
-    public SongAdapter(ArrayList<String> songs, RecycleViewClickListener listener, Context context) {
+    public SongAdapter(ArrayList<Song> songs, RecycleViewClickListener listener, Context context) {
         this.listener = listener;
         this.songs = songs;
         this.context = context;
@@ -69,8 +69,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
-        holder.song_title.setText("Perfect");
-        holder.song_author.setText("Ed sheeran");
+
+        holder.song_title.setText(songs.get(position).getTitle());
+        holder.song_author.setText(songs.get(position).getArtist());
 
     }
 

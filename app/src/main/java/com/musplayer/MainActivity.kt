@@ -2,6 +2,7 @@ package com.musplayer
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -25,24 +26,30 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-
-    private val permissionRequest: Int = 1
-    private var songsUri: ArrayList<String> = ArrayList()
+    private var songs: ArrayList<Song> = ArrayList()
     private var listener: SongAdapter.RecycleViewClickListener? = null
-    private val songs: ArrayList<Song>? = null
     private var adapter:SongAdapter? = null
 
-    private fun setOnClickListener(intent_song: ArrayList<String>) {
+    private fun setOnClickListener(intent_song: ArrayList<Song>) {
         listener = RecycleViewClickListener { view: View?, position: Int, type: Int ->
             when (type) {
                 1 -> {
-                    Log.w("play " , intent_song[position])
+                    Log.w("play " , intent_song[position].title)
                 }
                 2 -> {
-                    Log.w("more " , intent_song[position])
+                    Log.w("more " , intent_song[position].uri)
                 }
                 else -> {
-                    Log.w("go_to " , intent_song[position])
+                    Log.w("go_to " , position.toString())
+                    val intent = Intent(this, Player::class.java).apply {
+                        putExtra("uri", intent_song[position].uri)
+                        putExtra("title", intent_song[position].title)
+                        putExtra("artist", intent_song[position].artist)
+                        putExtra("is_playing" , intent_song[position].is_plying)
+                        putExtra("time", intent_song[position].time_play)
+                        putExtra("img", intent_song[position].imgUri)
+                    }
+                    startActivity(intent)
                 }
             }
         }
@@ -53,16 +60,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         music_list.isNestedScrollingEnabled = false
-        getPermission()
 
-        for (s in songsUri) {
-            Log.d("uris: ", s)
+        for (s in songs) {
+            Log.d("uris: ", s.title)
         }
 
+        songs = GetSongHelper.getSongs();
+
         //adapter
-        setOnClickListener(songsUri)
-        adapter = SongAdapter(songsUri, listener, this)
-        if (songsUri.isNotEmpty()) {
+        setOnClickListener(songs)
+        adapter = SongAdapter(songs, listener, this)
+        if (songs.isNotEmpty()) {
             val layoutManager: RecyclerView.LayoutManager =
                 LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
             music_list.layoutManager = layoutManager
@@ -96,65 +104,6 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-    }
-
-    private fun getPermission() {
-        //permission
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    permissionRequest
-                )
-            } else {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    permissionRequest
-                )
-            }
-        } else {
-            songsUri.clear()
-            songsUri.addAll(GetSongHelper.getUris())
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            permissionRequest -> {
-                if ((grantResults.isNotEmpty() &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                ) {
-                    if (ContextCompat.checkSelfPermission(
-                            this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        songsUri.clear()
-                        songsUri.addAll(GetSongHelper.getUris())
-                    }
-                } else {
-                    Toast.makeText(this, "No permission granted!", Toast.LENGTH_SHORT).show()
-                    finish()
-                }
-                return
-            }
-            else -> {
-            }
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")

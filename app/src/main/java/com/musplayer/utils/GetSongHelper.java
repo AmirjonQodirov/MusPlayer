@@ -4,16 +4,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.text.SpannableString;
-import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class GetSongHelper {
 
     private static boolean uris_loaded = false;
-    private static ArrayList<String> uris = new ArrayList<>();
+    private static ArrayList<Song> songs = new ArrayList<>();
 
     public static boolean isUris_loaded() {
         return uris_loaded;
@@ -23,35 +20,47 @@ public class GetSongHelper {
         GetSongHelper.uris_loaded = uris_loaded;
     }
 
-    public static ArrayList<String> getUris() {
-        return uris;
+    public static ArrayList<Song> getSongs() {
+        return songs;
     }
 
-    public static void setUris(ArrayList<String> uris) {
-        GetSongHelper.uris = uris;
+    public static void setSongs(ArrayList<Song> songs) {
+        GetSongHelper.songs = songs;
     }
 
     static public void getAllAudioFromDevice(final Context context) {
-        uris.clear();
+        songs.clear();
 
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 
         String[] projection = {
-                MediaStore.Audio.AudioColumns.DATA
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.AudioColumns.TITLE,
+                MediaStore.Audio.ArtistColumns.ARTIST,
+                MediaStore.Audio.Albums.ALBUM,
+//                MediaStore.Audio.Media.DATE_MODIFIED,
         };
         Cursor c = context.getContentResolver().query(uri, projection, null, null, null);
 
         if (c != null) {
             while (c.moveToNext()) {
 
-//                Song audioModel = new Song();
                 String path = c.getString(0);
+                String title = c.getString(1);
+                String artist = c.getString(2);
+                String album = c.getString(3);
 
+                Song s = new Song();
+                s.setUri(path);
+                s.setTitle(title);
+                s.setArtist(artist);
+                s.setAlbum(album);
 //                String name = path.substring(path.lastIndexOf("/") + 1);
+
 
 //                audioModel.setUri(path);
 
-                uris.add(path);
+                songs.add(s);
             }
             c.close();
         }
