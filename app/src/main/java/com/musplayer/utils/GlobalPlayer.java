@@ -7,42 +7,15 @@ import java.io.IOException;
 
 public class GlobalPlayer {
 
-    private static String uri;
-    private static MediaPlayer mp;
-    private static boolean playing_now = false;
-    private static boolean stopped = true;
+    private static MediaPlayer mp = new MediaPlayer();
 
-    public static boolean isPlaying_now() {
-        return playing_now;
+    public static boolean isPlayingNow() {
+        return mp.isPlaying();
     }
 
-    public static void setPlaying_now(boolean playing_now) {
-        GlobalPlayer.playing_now = playing_now;
-    }
-
-    public static boolean isStopped() {
-        return stopped;
-    }
-
-    public static void setStopped(boolean stopped) {
-        GlobalPlayer.stopped = stopped;
-    }
-
-    public static String getUri() {
-        return uri;
-    }
-
-    public static void setUri(String uri) {
-        GlobalPlayer.uri = uri;
-    }
-
-    public static MediaPlayer getMp() {
-        return mp;
-    }
-
-    public static void mediaPlayerInit(){
+    public static void mediaPlayerInit(String uri) {
         try {
-            mp = new MediaPlayer();
+            mp.reset();
             mp.setDataSource(uri);
             mp.prepare();
         } catch (IOException e) {
@@ -50,16 +23,24 @@ public class GlobalPlayer {
         }
     }
 
-    public static void playSong(){
+    public static int durationSong() {
+        return mp.getDuration();
+    }
+
+    public static int currentPositionSong() {
+        return mp.getCurrentPosition();
+    }
+
+    public static void seekToSong(int mSec) {
+        mp.seekTo(mSec);
+    }
+
+    public static void playSong() {
         mp.start();
     }
 
-    public static void pauseSong(){
+    public static void pauseSong() {
         mp.pause();
-    }
-
-    public static void stopSong(){
-        mp.stop();
     }
 
 }
